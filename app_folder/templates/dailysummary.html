@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+{% import "bootstrap/wtf.html" as wtf %}
+    <h1>Daily Summary Page</h1>
+    <form method="POST" action="" class="form-inline">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{wtf.quick_form(form,button_map={'submit': 'primary'})}}
+        </div>
+    </form>
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Calories</th>
+            <th>Quantity</th>
+          </tr>
+          {% for food in food_list %}
+          <tr>
+              <td>{{ food.date}}</td>
+              <td>{{ food.name }}</td>
+              <td>{{ food.calories }}</td>
+              <td>{{ food.quantity }}</td>
+          </tr>
+          {% endfor %} 
+    </table>
+    {% if total %}
+        <div style="margin-top: 10px;">Total:{{total.total_calories}}</div>
+    {% else %}
+        <div style="margin-top: 10px;">Total:0</div>
+    {% endif %}
+    
+{% endblock content %}

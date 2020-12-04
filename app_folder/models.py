@@ -43,3 +43,27 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+class Food(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    calories = db.Column(db.Integer, nullable=False)
+    carbon = protein = db.Column(db.Integer, nullable=True)
+    protein = db.Column(db.Integer, nullable=True)
+    fat = db.Column(db.Integer, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    def __repr__(self):
+        return f"Food('{self.name}', '{self.date}','{self.calories}','{self.quantity}')"
+
+class Summary(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    total_calories = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    def __repr__(self):
+        return f"Food('{self.date}', '{self.total_calories}')"
+                        

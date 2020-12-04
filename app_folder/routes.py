@@ -4,10 +4,16 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from app_folder import app, db, bcrypt, mail
 from app_folder.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                             PostForm, RequestResetForm, ResetPasswordForm)
-from app_folder.models import User, Post
+                             PostForm, RequestResetForm, ResetPasswordForm,SearchForm,SearchDateForm)
+from app_folder.models import User, Post,Food,Summary
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+import requests
+from bs4 import BeautifulSoup
+import re
+import datetime,time
+from sqlalchemy import and_
+from sqlalchemy import desc
 
 
 @app.route("/")
@@ -18,9 +24,13 @@ def home():
     return render_template('home.html', posts=posts)
 
 
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
+@app.route("/bmi")
+def bmi():
+    return render_template('bmi.html', title='BMI')
+
+@app.route("/bmr")
+def bmr():
+    return render_template('bmr.html', title='BMR')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -46,7 +56,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
+            login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
@@ -199,3 +209,164 @@ def reset_token(token):
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+
+
+@app.route("/search", methods=['GET', 'POST'])
+def search_food_calories():
+    form = SearchForm()
+    if form.validate_on_submit():
+        foodname=form.food.data
+        print(foodname)
+        r = requests.get("https://www.myfitnesspal.com/food/search?page=1&search="+foodname)
+        source=r.content
+        soup = BeautifulSoup(source,'html.parser')
+        new = soup.find('div',attrs={'class':'jss16'})
+        #print(new)
+        #print("==========")
+        newstring = re.findall(r">(.*?)<",str(new))
+        #print(newstring)
+        data=[]
+        for i in newstring:
+            if(re.search(r'\d', i)):
+                num = re.sub(r'\D', "", i)
+                data.append(num)      
+        #return redirect(url_for('search',data=data))
+        today=datetime.date.today()
+        print(today)
+        data = Food(name=foodname,calories=data[0],carbon=data[1],fat=data[2],protein=data[3],date = today,quantity=1)
+        #post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        return render_template('search_food_calories.html', title='search food calories',form=form,data=data)
+    return render_template('search_food_calories.html', title='search food calories',form=form)
+
+@app.route("/record", methods=['GET', 'POST'])
+@login_required
+def record_daily_calories():
+    '''
+    will show the food you add and make change on it.
+    '''
+    # form = SearchDateForm()
+    # if form.validate_on_submit():
+    #     date = form.date.data
+    #     food_list=[]
+    #     food_list = Food.query.filter(Food.date == date).filter(Food.user_id==current_user.id).order_by(desc(Food.calories)).all()
+    #     total=0
+    #     for item in food_list:
+    #         total=total+item.calories*item.quantity
+    #     if total == 0:
+    #         total = 'None'
+    #     return render_template('record.html', title='record calories',food_list=food_list,total=total,today=date,form=form)
+    # else:
+    food_list=[]
+    date = request.args.get('date')
+    today = date
+    if date:
+        fmt = '%Y-%m-%d'
+        time_tuple = time.strptime(date,fmt)
+        year, month, day = time_tuple[:3]
+        date = datetime.date(year, month, day)
+        totday=date
+    else:
+        today=datetime.date.today()
+    food_list = Food.query.filter(Food.date == today).filter(Food.user_id==current_user.id).order_by(desc(Food.calories)).all()
+    total=0
+    for item in food_list:
+        total=total+item.calories*item.quantity
+    if total == 0:
+        total = 'None'
+    return render_template('record.html', title='record calories',food_list=food_list,total=total,today=today)
+
+@app.route('/add',methods=["GET","POST"])
+@login_required
+def add():
+    name = request.args.get('name')
+    date = request.args.get('date')
+    newdate=date
+    quantity = request.args.get('quantity')
+    calories = request.args.get('calories')
+    fmt = '%Y-%m-%d'
+    time_tuple = time.strptime(date,fmt)
+    year, month, day = time_tuple[:3]
+    date = datetime.date(year, month, day)
+    food = Food.query.filter_by(name=name,date=date,calories=calories,user_id=current_user.id).first()
+    
+    if quantity == '0':
+        print("quantity is 0")
+        db.session.delete(food)
+        db.session.commit()
+    elif food:
+        print("+")
+        db.session.delete(food)
+        db.session.commit()
+        food = Food(name=name,date=date,quantity=quantity,calories=calories,user_id=current_user.id)
+        db.session.add(food)
+        db.session.commit()
+    else:
+        food = Food(name=name,date=date,quantity=quantity,calories=calories,user_id=current_user.id)
+        print("add")
+        db.session.add(food)
+        db.session.commit()
+
+    return redirect('/record?date='+newdate)
+
+
+@app.route('/deleteRecord',methods=["GET","POST"])
+@login_required
+def deleteRecord():
+    date = request.args.get('date')
+    newdate = date
+    name = request.args.get('name')
+    calories = request.args.get('calories')
+    quantity = request.args.get('quantity')
+    fmt = '%Y-%m-%d'
+    time_tuple = time.strptime(date,fmt)
+    year, month, day = time_tuple[:3]
+    date = datetime.date(year, month, day)
+    food = Food.query.filter_by(name=name,date=date,quantity=quantity,calories=calories,user_id=current_user.id).first()
+    if food:
+        print("food delete")
+        db.session.delete(food)
+        db.session.commit()
+    else:
+        print("pass")
+    return redirect('/record?date='+newdate)
+
+@app.route('/submitSummary',methods=["GET","POST"])
+@login_required
+def submitSummary():
+    date = request.args.get('date')
+    total_calories = request.args.get('total')
+  
+    fmt = '%Y-%m-%d'
+    time_tuple = time.strptime(date,fmt)
+    year, month, day = time_tuple[:3]
+    date = datetime.date(year, month, day)
+    summary = Summary.query.filter_by(date=date,user_id=current_user.id).first()
+    if summary:
+        db.session.delete(summary)
+        db.session.commit()
+    summary = Summary(date=date,total_calories=total_calories,user_id=current_user.id)
+    db.session.add(summary)
+    db.session.commit()
+    return redirect("/dailySummary")
+
+@app.route('/dailySummary',methods=["GET","POST"])
+@login_required
+def dailySummary():
+    form = SearchDateForm()
+    if form.validate_on_submit():
+        print("jinlail")
+        date = form.date.data
+        food_list = Food.query.filter(Food.date == date).filter(Food.user_id==current_user.id).all()
+        total = Summary.query.filter_by(date=date,user_id=current_user.id).first()
+        if(total is None):
+            food_list=[]
+            return render_template("dailysummary.html",food_list=food_list,total=total,form=form)
+        return render_template("dailysummary.html",food_list=food_list,total=total,form=form)
+    else:
+        today=datetime.date.today()
+        food_list = Food.query.filter(Food.date == today).filter(Food.user_id==current_user.id).all()
+        total = Summary.query.filter_by(date=today,user_id=current_user.id).first()
+        if(total is None):
+            food_list=[]
+            return render_template("dailysummary.html",food_list=food_list,total=total,form=form)
+        return render_template("dailysummary.html",food_list=food_list,total=total,form=form)

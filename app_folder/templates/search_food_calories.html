@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+{% import "bootstrap/wtf.html" as wtf %}
+    <div class="container">
+        <legend class="border-bottom mb-4">Search Food Calories</legend>
+       
+            <form method="POST" action="" class="form-inline">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{wtf.quick_form(form,button_map={'submit': 'primary'})}}
+                </div>
+            </form>
+            {% if data %}
+                <div>
+                    <legend class="border-bottom mb-4">Food Summary</legend>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Calories</th>
+                            <th>Quality</th>
+                            <th>Carbon(g)</th>
+                            <th>Fat(g)</th>
+                            <th>Protein(g)</th>
+                            <th>Operation</th>
+                        </tr>
+                        <tr>
+                            <td>{{ data.date}}</td>
+                            <td>{{ data.name}}</td>
+                            <td>{{ data.calories }}</td>
+                            <td>{{ data.quantity }}</td>
+                            <td>{{ data.carbon }}</td>
+                            <td>{{ data.fat }}</td>
+                            <td>{{ data.protein }}</td>
+                            <td ><a href="/add?date={{ data.date}}&name={{data.name}}&calories={{data.calories}}&quantity={{data.quantity}}"><button class="btn btn-primary">Add</button></a></td>
+                        </tr>
+                    </table>
+                </div>
+            {% endif %}
+            
+            
+    </div>
+{% endblock content %}

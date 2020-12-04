@@ -4,16 +4,17 @@ from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from app_folder.models import User
+from wtforms.fields.html5 import DateField
 
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
-                           validators=[DataRequired(), Length(min=2, max=20)])
+                           validators=[DataRequired(), Length(min=2, max=20)],render_kw={"placeholder": "Username"})
     email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+                        validators=[DataRequired(), Email()],render_kw={"placeholder": "123@gmail.com"})
+    password = PasswordField('Password', validators=[DataRequired()],render_kw={"placeholder": "Password"})
     confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')])
+                                     validators=[DataRequired(), EqualTo('password')],render_kw={"placeholder": "Password"})
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
@@ -28,11 +29,17 @@ class RegistrationForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
+    email = StringField('Email',validators=[DataRequired(), Email()],render_kw={"placeholder": "123@gmail.com"})
+    password = PasswordField('Password',validators=[DataRequired()],render_kw={"placeholder": "Password"})
     submit = SubmitField('Login')
+
+
+    def validate_username(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('Invalid Username or Password')
+        elif not user.check_password(self.password.data):
+            raise ValidationError('Invalid Username or Password')
 
 
 class UpdateAccountForm(FlaskForm):
@@ -57,20 +64,20 @@ class UpdateAccountForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(),Length(min=4, max=20)])
+    content = TextAreaField('Content', validators=[DataRequired(),Length(min=4)])
     submit = SubmitField('Post')
 
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email',
-                        validators=[DataRequired(), Email()])
+                        validators=[DataRequired(),])
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is None:
-            raise ValidationError('There is no account with that email. You must register first.')
+            raise ValidationError('Email is not exist,please register first')
 
 
 class ResetPasswordForm(FlaskForm):
@@ -78,3 +85,16 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class SearchForm(FlaskForm):
+    food = StringField('Food', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+class SearchDateForm(FlaskForm):
+    date = DateField('Date', format='%Y-%m-%d',validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+
+
+
+
