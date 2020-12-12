@@ -72,7 +72,7 @@ class BMRForm(FlaskForm):
     height = IntegerField('Height (in)', validators=[DataRequired()])
     age = IntegerField('Age (yrs)', validators=[DataRequired()])
     gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
-    submit = SubmitField('Caculate BMI')
+    submit = SubmitField('Caculate BMR')
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(),Length(min=4, max=20)])
