@@ -29,7 +29,7 @@ def bmi():
     message = 'Your BMI: '
     form = BMIForm()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate():
         userWeight = form.weight.data
         userHeight = form.height.data
         message = message + str((userWeight / (userHeight*userHeight))*703)
@@ -41,7 +41,7 @@ def bmr():
     message = 'Your BMR: '
     form = BMRForm()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate():
         userWeight = form.weight.data
         userHeight = form.height.data
         userAge = form.age.data

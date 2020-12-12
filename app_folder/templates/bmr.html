@@ -1,29 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
+{% import "bootstrap/wtf.html" as wtf %}
     <h1>{{title}} Page</h1>
-
-    <form action="" method="post">
-        <p>
-            {{form.weight.label}}
-            {{form.weight}}
-        </p>
-        <p>
-            {{form.height.label}}
-            {{form.height}}
-        </p>
-        <p>
-            {{form.age.label}}
-            {{form.age}}
-        </p>
-        <p>
-            {{form.gender.label}}
-            {{form.gender}}
-        </p>
-        <p>
-            {{form.submit}}
-        </p>
-        <p>
-            {{message}}
-        </p>
-    </form>
+    <div class="content-section">
+        <form action="" method="post">
+            <form action="" method="post">
+                {{wtf.quick_form(form,button_map={'submit': 'primary'})}}
+            </form>
+            <p>
+                {{message}}
+            </p>
+        </form>
+    </div>
 {% endblock content %}

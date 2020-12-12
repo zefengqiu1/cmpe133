@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from app_folder.models import User
 from wtforms.fields.html5 import DateField
 
@@ -63,14 +63,14 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken. Please choose a different one.')
 
 class BMIForm(FlaskForm):
-    weight = IntegerField('Weight (lbs)', validators=[DataRequired()])
-    height = IntegerField('Height (in)', validators=[DataRequired()])
+    weight = IntegerField('Weight (lbs)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=1000, message='Invalid Range (max=1000 lbs)')])
+    height = IntegerField('Height (in)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=200, message='Invalid Range (max=200 in)')])
     submit = SubmitField('Caculate BMI')
 
 class BMRForm(FlaskForm):
-    weight = IntegerField('Weight (lbs)', validators=[DataRequired()])
-    height = IntegerField('Height (in)', validators=[DataRequired()])
-    age = IntegerField('Age (yrs)', validators=[DataRequired()])
+    weight = IntegerField('Weight (lbs)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=1000, message='Invalid Range (max=1000 lbs)')])
+    height = IntegerField('Height (in)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=200, message='Invalid Range (max=200 in)')])
+    age = IntegerField('Age (yrs)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=150, message='Invalid Range (max=150 yrs)')])
     gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
     submit = SubmitField('Caculate BMR')
 
