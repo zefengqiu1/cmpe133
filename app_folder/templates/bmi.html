@@ -1,4 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>BMI Page</h1>
+    <h1>{{title}} Page</h1>
+
+    <form action="" method="post">
+        <p>
+            {{form.weight.label}}
+            {{form.weight}}
+        </p>
+        <p>
+            {{form.height.label}}
+            {{form.height}}
+        </p>
+        <p>
+            {{form.submit}}
+        </p>
+        <p>
+            {{message}}
+        </p>
+    </form>
 {% endblock content %}

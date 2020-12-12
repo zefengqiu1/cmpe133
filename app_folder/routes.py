@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from app_folder import app, db, bcrypt, mail
 from app_folder.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                             PostForm, RequestResetForm, ResetPasswordForm,SearchForm,SearchDateForm)
+                             PostForm, RequestResetForm, ResetPasswordForm,SearchForm,SearchDateForm,BMIForm,BMRForm)
 from app_folder.models import User, Post,Food,Summary
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -24,13 +24,33 @@ def home():
     return render_template('home.html', posts=posts)
 
 
-@app.route("/bmi")
+@app.route("/bmi", methods=['GET', 'POST'])
 def bmi():
-    return render_template('bmi.html', title='BMI')
+    message = 'Your BMI: '
+    form = BMIForm()
 
-@app.route("/bmr")
+    if request.method == 'POST':
+        userWeight = form.weight.data
+        userHeight = form.height.data
+        message = message + str((userWeight / (userHeight*userHeight))*703)
+
+    return render_template('bmi.html', title='BMI', form=form, message=message)
+
+@app.route("/bmr", methods=['GET', 'POST'])
 def bmr():
-    return render_template('bmr.html', title='BMR')
+    message = 'Your BMR: '
+    form = BMRForm()
+
+    if request.method == 'POST':
+        userWeight = form.weight.data
+        userHeight = form.height.data
+        userAge = form.age.data
+        if(form.gender.data == 'M'):
+            message = message + str(66 + (6.23 * userWeight) + (12.7 * userHeight) + (6.8*userAge))
+        else:
+            message = message + str(655 + (4.35 * userWeight) + (4.7 * userHeight) + (4.7*userAge))
+
+    return render_template('bmr.html', title='BMR', form=form, message=message)
 
 
 @app.route("/register", methods=['GET', 'POST'])

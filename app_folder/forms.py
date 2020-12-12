@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from app_folder.models import User
 from wtforms.fields.html5 import DateField
@@ -62,6 +62,17 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
+class BMIForm(FlaskForm):
+    weight = IntegerField('Weight (lbs)', validators=[DataRequired()])
+    height = IntegerField('Height (in)', validators=[DataRequired()])
+    submit = SubmitField('Caculate BMI')
+
+class BMRForm(FlaskForm):
+    weight = IntegerField('Weight (lbs)', validators=[DataRequired()])
+    height = IntegerField('Height (in)', validators=[DataRequired()])
+    age = IntegerField('Age (yrs)', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
+    submit = SubmitField('Caculate BMI')
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(),Length(min=4, max=20)])
