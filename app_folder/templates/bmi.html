@@ -1,4 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>BMI Page</h1>
+{% import "bootstrap/wtf.html" as wtf %}
+    <h1>{{title}} Page</h1>
+    <div class="content-section">
+        <form action="" method="post">
+            <form action="" method="post">
+                {{wtf.quick_form(form,button_map={'submit': 'primary'})}}
+            </form>
+            <p>
+                {{message}}
+            </p>
+        </form>
+    </div>
 {% endblock content %}

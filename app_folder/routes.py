@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from app_folder import app, db, bcrypt, mail
 from app_folder.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                             PostForm, RequestResetForm, ResetPasswordForm,SearchForm,SearchDateForm)
+                             PostForm, RequestResetForm, ResetPasswordForm,SearchForm,SearchDateForm,BMIForm,BMRForm)
 from app_folder.models import User, Post,Food,Summary
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -24,13 +24,33 @@ def home():
     return render_template('home.html', posts=posts)
 
 
-@app.route("/bmi")
+@app.route("/bmi", methods=['GET', 'POST'])
 def bmi():
-    return render_template('bmi.html', title='BMI')
+    message = 'Your BMI: '
+    form = BMIForm()
 
-@app.route("/bmr")
+    if request.method == 'POST' and form.validate():
+        userWeight = form.weight.data
+        userHeight = form.height.data
+        message = message + str((userWeight / (userHeight*userHeight))*703)
+
+    return render_template('bmi.html', title='BMI', form=form, message=message)
+
+@app.route("/bmr", methods=['GET', 'POST'])
 def bmr():
-    return render_template('bmr.html', title='BMR')
+    message = 'Your BMR: '
+    form = BMRForm()
+
+    if request.method == 'POST' and form.validate():
+        userWeight = form.weight.data
+        userHeight = form.height.data
+        userAge = form.age.data
+        if(form.gender.data == 'M'):
+            message = message + str(66 + (6.23 * userWeight) + (12.7 * userHeight) + (6.8*userAge))
+        else:
+            message = message + str(655 + (4.35 * userWeight) + (4.7 * userHeight) + (4.7*userAge))
+
+    return render_template('bmr.html', title='BMR', form=form, message=message)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -70,28 +90,12 @@ def logout():
     return redirect(url_for('home'))
 
 
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
-    return picture_fn
-
 
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
-        if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -100,9 +104,8 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account',
-                           image_file=image_file, form=form)
+
+    return render_template('account.html', title='Account',form=form)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -117,54 +120,6 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
-
-
-@app.route("/post/<int:post_id>")
-def post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
-
-
-@app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
-@login_required
-def update_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
-        db.session.commit()
-        flash('Your post has been updated!', 'success')
-        return redirect(url_for('post', post_id=post.id))
-    elif request.method == 'GET':
-        form.title.data = post.title
-        form.content.data = post.content
-    return render_template('create_post.html', title='Update Post',
-                           form=form, legend='Update Post')
-
-
-@app.route("/post/<int:post_id>/delete", methods=['POST'])
-@login_required
-def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    db.session.delete(post)
-    db.session.commit()
-    flash('Your post has been deleted!', 'success')
-    return redirect(url_for('home'))
-
-
-@app.route("/user/<string:username>")
-def user_posts(username):
-    page = request.args.get('page', 1, type=int)
-    user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user)\
-        .order_by(Post.date_posted.desc())\
-        .paginate(page=page, per_page=5)
-    return render_template('user_posts.html', posts=posts, user=user)
 
 
 def send_reset_email(user):
@@ -244,18 +199,6 @@ def record_daily_calories():
     '''
     will show the food you add and make change on it.
     '''
-    # form = SearchDateForm()
-    # if form.validate_on_submit():
-    #     date = form.date.data
-    #     food_list=[]
-    #     food_list = Food.query.filter(Food.date == date).filter(Food.user_id==current_user.id).order_by(desc(Food.calories)).all()
-    #     total=0
-    #     for item in food_list:
-    #         total=total+item.calories*item.quantity
-    #     if total == 0:
-    #         total = 'None'
-    #     return render_template('record.html', title='record calories',food_list=food_list,total=total,today=date,form=form)
-    # else:
     food_list=[]
     date = request.args.get('date')
     today = date
