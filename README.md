@@ -11,9 +11,9 @@
    - [Installation](https://pip.pypa.io/en/stable/installing.html)
    - [Usage](https://pip.pypa.io/en/stable/)
 
-3. Open the terminal,command to install all libraries you need: pip3 install -r requirements.txt 
+3. Open the terminal,go to the directory where requirements.txt located. Then,input command to install all libraries you need: pip3 install -r requirements.txt 
 
-4. Open the terminal, cd to root dirctory of this application, then enter command "python run.py". then, you able to the applicaiton is running.
+4. Open the terminal, cd to root dirctory of this application which is cmpe133, then enter command "python run.py". then, you able to the applicaiton is running.
 
 5. Go to browser type in url http://127.0.0.1:5000/ then you able to see the website
 
