@@ -2,11 +2,13 @@
 {% block content %}
 {% import "bootstrap/wtf.html" as wtf %}
     <h1>Daily Summary Page</h1>
+    <div class="content-section">
     <form method="POST" action="" class="form-inline">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{wtf.quick_form(form,button_map={'submit': 'primary'})}}
         </div>
+        <p></p>
     </form>
     <table class="table table-bordered table-hover">
         <tr>
@@ -25,9 +27,10 @@
           {% endfor %} 
     </table>
     {% if total %}
-        <div style="margin-top: 10px;">Total:{{total.total_calories}}</div>
+        <div style="margin-top: 10px;">Total: {{total.total_calories}}</div>
     {% else %}
-        <div style="margin-top: 10px;">Total:0</div>
+        <div style="margin-top: 10px;">Total: 0</div>
     {% endif %}
+    </div>
     
 {% endblock content %}

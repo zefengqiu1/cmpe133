@@ -104,6 +104,8 @@ class BMRForm(FlaskForm):
     height = IntegerField('Height (in)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=200, message='Invalid Range (max=200 in)')])
     age = IntegerField('Age (yrs)', validators=[DataRequired(message='Invalid Number'), NumberRange(min=0, max=150, message='Invalid Range (max=150 yrs)')])
     gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
+    activity = SelectField('Acitivty Level', choices=[("1.2", 'Sedentary (Little or no exercise'), ("1.375", 'Lightly Active (Exercise 1-3 times a week)'),
+                                                    ("1.55", 'Moderately Active (Exercise 5-7 times a week)'), ("1.725", 'Very Active (Exercise twice a day)')])
     submit = SubmitField('Caculate BMR')
 
 

@@ -21,36 +21,50 @@ from sqlalchemy import desc
 def home():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
-    return render_template('home.html', posts=posts)
+    return render_template('home.html', title="Home", posts=posts)
 
 
 @app.route("/bmi", methods=['GET', 'POST'])
 def bmi():
     message = 'Your BMI: '
+    messageValue = 0
     form = BMIForm()
 
     if request.method == 'POST' and form.validate():
         userWeight = form.weight.data
         userHeight = form.height.data
-        message = message + str((userWeight / (userHeight*userHeight))*703)
+        messageValue = round((userWeight / (userHeight*userHeight))*703, 2)
 
-    return render_template('bmi.html', title='BMI', form=form, message=message)
+    return render_template('bmi.html', title='Calculate BMI', form=form, message=message, messageValue=messageValue)
 
 @app.route("/bmr", methods=['GET', 'POST'])
 def bmr():
-    message = 'Your BMR: '
+    message = 'Base BMR: '
+    message2 = 'Your BMR: '
     form = BMRForm()
+    bmr = 0
+
+    messageValue = ""
+    message2Value = ""
 
     if request.method == 'POST' and form.validate():
         userWeight = form.weight.data
         userHeight = form.height.data
         userAge = form.age.data
         if(form.gender.data == 'M'):
-            message = message + str(66 + (6.23 * userWeight) + (12.7 * userHeight) + (6.8*userAge))
+            bmr = 66 + (6.23 * userWeight) + (12.7 * userHeight) + (6.8*userAge)
         else:
-            message = message + str(655 + (4.35 * userWeight) + (4.7 * userHeight) + (4.7*userAge))
+            bmr = 655 + (4.35 * userWeight) + (4.7 * userHeight) + (4.7*userAge)
 
-    return render_template('bmr.html', title='BMR', form=form, message=message)
+        message = message
+        messageValue = str(round(bmr, 1))
+        multiplier = float(form.activity.data)
+        message2 = 'Your BMR: (x' + str(multiplier) + "): "
+        message2Value = str(round(bmr*multiplier, 1))
+
+
+
+    return render_template('bmr.html', title='Calculate BMR', form=form, message=message, messageValue=messageValue, message2=message2, message2Value=message2Value)
 
 
 @app.route("/register", methods=['GET', 'POST'])
