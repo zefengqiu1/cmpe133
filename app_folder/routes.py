@@ -171,10 +171,15 @@ def search_food_calories():
     form = SearchForm()
     if form.validate_on_submit():
         foodname=form.food.data
-        print(foodname)
+        #print(foodname)
         r = requests.get("https://www.myfitnesspal.com/food/search?page=1&search="+foodname)
         source=r.content
         soup = BeautifulSoup(source,'html.parser')
+        notfound='There were no results for your search'
+        html=soup.get_text()
+        if notfound in html:
+            #print("yes")
+            return render_template('search_food_calories.html', title='search food calories',form=form,notfound=notfound)
         new = soup.find('div',attrs={'class':'jss16'})
         #print(new)
         #print("==========")
@@ -187,7 +192,7 @@ def search_food_calories():
                 data.append(num)      
         #return redirect(url_for('search',data=data))
         today=datetime.date.today()
-        print(today)
+        #print(today)
         data = Food(name=foodname,calories=data[0],carbon=data[1],fat=data[2],protein=data[3],date = today,quantity=1)
         #post = Post(title=form.title.data, content=form.content.data, author=current_user)
         return render_template('search_food_calories.html', title='search food calories',form=form,data=data)
