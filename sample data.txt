@@ -1,0 +1,23 @@
+sample data:
+1. credential to login
+	-email:zefengqiu1@gmail.com
+	-password:123
+2.bmi & bmr
+  	-weight:150
+  	-heigt:70
+  	-male:male
+  	-age:18
+
+3.search food calories:
+  	-apple
+  	-fish
+  	-juice
+  	-egg
+  	-bread
+
+4. new post
+  	title:hello!
+  	content: have a good holiday!
+5.account update
+  	-username: jeff
+	-email: jeff@gmail.com
