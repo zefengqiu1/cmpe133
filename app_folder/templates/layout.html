@@ -30,11 +30,11 @@
           <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('bmi') }}">Calculate BMI</a></li>
           <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('bmr') }}">Calculate BMR</a></li>
           <li><a class="navbar-brand mr-4, navbarItem" href="/search">Search</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="/record">Record</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="/dailySummary">Daily Summary</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_authenticated %}
-            <li><a class="navbar-brand mr-4, navbarItem" href="/record">Record</a></li>
-            <li><a class="navbar-brand mr-4, navbarItem" href="/dailySummary">Daily Summary</a></li>
             <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('new_post') }}">New Post</a></li>
             <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('account') }}">Account</a></li>
             <li><a class="navbar-brand mr-4, navbarItem" href="/logout">Logout</a></li>
