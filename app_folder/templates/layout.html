@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -13,31 +14,31 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
-        <title>Calories tracker - {{ title }}</title>
+        <title>Calorie tracker - {{ title }}</title>
     {% else %}
-        <title>Calories tracker</title>
+        <title>Calorie tracker</title>
     {% endif %}
 </head>
 <body>
   <nav class="navbar navbar-inverse fixed-top">
     <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand mr-4" href="/">Forum</a>
-        <a class="navbar-brand mr-4" href="{{ url_for('home') }}">Home</a>
-        <a class="navbar-brand mr-4" href="{{ url_for('bmi') }}">BMI</a>
-        <a class="navbar-brand mr-4" href="{{ url_for('bmr') }}">BMR</a>
-        <a class="navbar-brand mr-4" href="/search">Search</a>
-        <a class="navbar-brand mr-4" href="/record">Record</a>
-        <a class="navbar-brand mr-4" href="/dailySummary">Daily Summary</a>
-      </div>
+        <ul class="nav navbar-nav navbar-left">
+          <li><a class="navbar-brand mr-4, navbarItem" href="/">Forum</a>
+          <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('home') }}">Home</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('bmi') }}">Calculate BMI</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('bmr') }}">Calculate BMR</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="/search">Search</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="/record">Record</a></li>
+          <li><a class="navbar-brand mr-4, navbarItem" href="/dailySummary">Daily Summary</a></li>
+        </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_authenticated %}
-            <li><a class="navbar-brand mr-4" href="{{ url_for('new_post') }}">New Post</a></li>
-            <li><a class="navbar-brand mr-4" href="{{ url_for('account') }}">Account</a></li>
-            <li><a class="navbar-brand mr-4" href="/logout">Logout</a></li>
+            <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('new_post') }}">New Post</a></li>
+            <li><a class="navbar-brand mr-4, navbarItem" href="{{ url_for('account') }}">Account</a></li>
+            <li><a class="navbar-brand mr-4, navbarItem" href="/logout">Logout</a></li>
             {% else %}
-            <li><a class="navbar-brand mr-4" href="/login">Login</a></li>
-            <li><a class="navbar-brand mr-4" href="/register">Register</a></li>
+            <li><a class="navbar-brand mr-4, navbarItem" href="/login">Login</a></li>
+            <li><a class="navbar-brand mr-4, navbarItem" href="/register">Register</a></li>
             {% endif %}
 
         </ul>

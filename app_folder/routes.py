@@ -21,12 +21,13 @@ from sqlalchemy import desc
 def home():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
-    return render_template('home.html', posts=posts)
+    return render_template('home.html', title="Home", posts=posts)
 
 
 @app.route("/bmi", methods=['GET', 'POST'])
 def bmi():
     message = 'Your BMI: '
+    messageValue = 0
     form = BMIForm()
 
     if request.method == 'POST' and form.validate():
@@ -39,8 +40,12 @@ def bmi():
 @app.route("/bmr", methods=['GET', 'POST'])
 def bmr():
     message = 'Your BMR: '
-    message2 = '';
+    message2 = ''
     form = BMRForm()
+    bmr = 0
+
+    messageValue = ""
+    message2Value = ""
 
     if request.method == 'POST' and form.validate():
         userWeight = form.weight.data

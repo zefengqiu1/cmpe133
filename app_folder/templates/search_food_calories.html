@@ -2,8 +2,8 @@
 {% block content %}
 {% import "bootstrap/wtf.html" as wtf %}
     <div class="container">
-        <legend class="border-bottom mb-4">Search Food Calories</legend>
-       
+        <legend class="border-bottom mb-4"><h1>Search Food Calories</h1></legend>
+            <div class="content-section">
             <form method="POST" action="" class="form-inline">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
@@ -12,7 +12,7 @@
             </form>
             {% if data %}
                 <div>
-                    <legend class="border-bottom mb-4">Food Summary</legend>
+                    <legend class="border-bottom mb-4"><br>Food Summary</br></legend>
                     <table class="table table-bordered table-hover">
                         <tr>
                             <th>Date</th>
@@ -39,7 +39,7 @@
             {% else %}
                  <div>{{notfound}}</div> 
             {% endif %}
-            
+        </div>
             
     </div>
 {% endblock content %}
