@@ -32,13 +32,14 @@ def bmi():
     if request.method == 'POST' and form.validate():
         userWeight = form.weight.data
         userHeight = form.height.data
-        message = message + str((userWeight / (userHeight*userHeight))*703)
+        message = message + str(round((userWeight / (userHeight*userHeight))*703, 2))
 
-    return render_template('bmi.html', title='BMI', form=form, message=message)
+    return render_template('bmi.html', title='Caculate My BMI', form=form, message=message)
 
 @app.route("/bmr", methods=['GET', 'POST'])
 def bmr():
     message = 'Your BMR: '
+    message2 = '';
     form = BMRForm()
 
     if request.method == 'POST' and form.validate():
@@ -46,11 +47,15 @@ def bmr():
         userHeight = form.height.data
         userAge = form.age.data
         if(form.gender.data == 'M'):
-            message = message + str(66 + (6.23 * userWeight) + (12.7 * userHeight) + (6.8*userAge))
+            bmr = (66 + (6.23 * userWeight) + (12.7 * userHeight) + (6.8*userAge))
         else:
-            message = message + str(655 + (4.35 * userWeight) + (4.7 * userHeight) + (4.7*userAge))
+            bmr = (655 + (4.35 * userWeight) + (4.7 * userHeight) + (4.7*userAge))
 
-    return render_template('bmr.html', title='BMR', form=form, message=message)
+        message = message + str(round(bmr, 1))
+        multiplier = float(form.activity.data)
+        message2 = 'Your BMR: (x' + str(multiplier) + "): " + str(round(bmr*multiplier, 1))
+
+    return render_template('bmr.html', title='Caculate My BMR', form=form, message=message, message2=message2)
 
 
 @app.route("/register", methods=['GET', 'POST'])
