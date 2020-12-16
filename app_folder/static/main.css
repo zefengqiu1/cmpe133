@@ -1,34 +1,14 @@
-@font-face{
-  font-family: trial;
-  src: url('Borda Bold.ttf');
-  font-weight: bold;
-  font-size-adjust: 1.5;
-}
-
-/*
-#maintitle{
-  color: rgb(44, 44, 44);
-  padding: 5px 5px 5px 25px;
-  font-family: trial;
-  font-size: 80px;
-  background: rgb(36, 36, 36, 0.5);
-  border: 1px solid #000000;
-}
-*/
-
 body {
   background: #ffffff;
   color: #333333;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: trial;
-  font-size: 40px;
   color: #444444;
   background: #fafafa;
   padding: 10px;
-  border-radius: 16px;
-  border: 1px solid #646464;
+  border-radius: 10px;
+  border: 1px solid #bebebe;
 }
 
 .bg-steel {
@@ -52,7 +32,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0;
 }
 .navbar-nav {
-  height: 80px;
+  height: 60px;
   padding-left: 15px;
   text-align: center;
 }
@@ -65,26 +45,6 @@ h1, h2, h3, h4, h5, h6 {
   padding-top:5px;
 }
 
-.navbarItem{
-  font-family: trial;
-  margin: 10px 25px 25px 25px;
-  background-color: #ececec;
-  border: 1px solid #c0c0c0;
-  margin-left: 80px;
-}
-.nav.navbar-nav.navbar-left li a {
-  color: black;
-}
-.nav.navbar-nav.navbar-left li a:hover{
-  color: white;
-}
-.nav.navbar-nav.navbar-right li a {
-  color: black;
-}
-.nav.navbar-nav.navbar-right li a:hover{
-  color: white;
-}
-
 
 #register{
   background-color: rgb(255, 255, 255);
@@ -94,12 +54,10 @@ h1, h2, h3, h4, h5, h6 {
 
 
 .content-section {
-  font-family: trial;
-  font-size: 18px;
   background: #ffffff;
   padding: 10px 20px;
-  border: 1px solid #646464;
-  border-radius: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
   margin-bottom: 50px;
 }
 
